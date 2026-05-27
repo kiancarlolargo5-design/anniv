@@ -1,0 +1,1222 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Kigan 6th Anniversary</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,300;1,400&family=Playfair+Display:ital,wght@0,400;0,700;1,400;1,700&family=Dancing+Script:wght@400;600;700&family=Cinzel:wght@400;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --crimson: #8B0000;
+    --deep-red: #6B0000;
+    --rose: #C41E3A;
+    --blush: #F5E6E8;
+    --ivory: #FDF6E3;
+    --gold: #C9A84C;
+    --gold-light: #E8C97A;
+    --ink: #2C1810;
+    --petal: #FFB7B2;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--crimson);
+    font-family: 'Cormorant Garamond', serif;
+    overflow-x: hidden;
+  }
+
+
+
+  /* Petals */
+  .petal {
+    position: fixed;
+    width: 12px;
+    height: 16px;
+    background: radial-gradient(ellipse at 40% 30%, #ffb7c5, #e8495a80);
+    border-radius: 50% 0 50% 0;
+    pointer-events: none;
+    z-index: 9990;
+    animation: petalFall linear infinite;
+    opacity: 0;
+  }
+  @keyframes petalFall {
+    0%   { transform: translateY(-20px) rotate(0deg); opacity: 0; }
+    10%  { opacity: 0.8; }
+    85%  { opacity: 0.6; }
+    100% { transform: translateY(110vh) rotate(720deg) translateX(80px); opacity: 0; }
+  }
+
+  /* Background texture */
+  .bg-texture {
+    position: fixed;
+    inset: 0;
+    background:
+      radial-gradient(ellipse at 20% 20%, rgba(139,0,0,0.4) 0%, transparent 50%),
+      radial-gradient(ellipse at 80% 80%, rgba(107,0,0,0.5) 0%, transparent 50%),
+      radial-gradient(ellipse at 50% 50%, #8B0000 0%, #4a0000 100%);
+    z-index: 0;
+  }
+  .bg-texture::after {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.02'%3E%3Cpath d='M30 30c0-5.5 4.5-10 10-10s10 4.5 10 10-4.5 10-10 10S30 35.5 30 30zM10 10c0-5.5 4.5-10 10-10s10 4.5 10 10-4.5 10-10 10S10 15.5 10 10z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+  }
+
+  /* ===================== ENVELOPE SCENE ===================== */
+  #envelope-scene {
+    position: fixed;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 100;
+    transition: opacity 0.8s ease, transform 0.8s ease;
+  }
+  #envelope-scene.hidden {
+    opacity: 0;
+    pointer-events: none;
+    transform: scale(0.95);
+  }
+
+  .envelope-wrap {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 32px;
+    animation: floatEnvelope 4s ease-in-out infinite;
+  }
+  @keyframes floatEnvelope {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-14px); }
+  }
+
+  .envelope-hint {
+    font-family: 'Dancing Script', cursive;
+    color: var(--gold-light);
+    font-size: 1.4rem;
+    opacity: 0.85;
+    letter-spacing: 0.05em;
+    animation: pulse 2.5s ease-in-out infinite;
+  }
+  @keyframes pulse { 0%,100%{opacity:0.6} 50%{opacity:1} }
+
+  .envelope {
+    position: relative;
+    width: 340px;
+    height: 240px;
+    filter: drop-shadow(0 20px 60px rgba(0,0,0,0.5));
+    transition: transform 0.3s ease;
+  }
+  .envelope:hover { transform: scale(1.03) rotate(-1deg); }
+
+  .env-body {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(160deg, #FDF6E3 0%, #F5E6E8 60%, #FDF6E3 100%);
+    border-radius: 4px 4px 12px 12px;
+    border: 2px solid var(--gold);
+    overflow: hidden;
+  }
+  .env-body::before {
+    content: '';
+    position: absolute;
+    inset: 6px;
+    border: 1px solid rgba(201,168,76,0.3);
+    border-radius: 2px 2px 8px 8px;
+  }
+
+  .env-bottom-left {
+    position: absolute;
+    bottom: 0; left: 0;
+    width: 0; height: 0;
+    border-left: 170px solid #e8d5b0;
+    border-top: 120px solid transparent;
+  }
+  .env-bottom-right {
+    position: absolute;
+    bottom: 0; right: 0;
+    width: 0; height: 0;
+    border-right: 170px solid #ddc99a;
+    border-top: 120px solid transparent;
+  }
+  .env-flap {
+    position: absolute;
+    top: 0; left: 0;
+    width: 100%;
+    height: 0;
+    border-left: 170px solid transparent;
+    border-right: 170px solid transparent;
+    border-top: 130px solid #F5E6E8;
+    transform-origin: top center;
+    transition: transform 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);
+    filter: drop-shadow(0 4px 8px rgba(0,0,0,0.1));
+    z-index: 5;
+  }
+  .env-flap::after {
+    content: '';
+    position: absolute;
+    top: -130px; left: -170px;
+    width: 0; height: 0;
+    border-left: 170px solid transparent;
+    border-right: 170px solid transparent;
+    border-top: 130px solid rgba(201,168,76,0.4);
+    clip-path: polygon(0 0, 100% 0, 50% 100%);
+  }
+  .envelope:hover .env-flap {
+    transform: rotateX(-160deg);
+  }
+
+  .env-seal {
+    position: absolute;
+    top: 95px; left: 50%;
+    transform: translateX(-50%);
+    width: 56px; height: 56px;
+    background: radial-gradient(circle at 35% 35%, var(--rose), var(--deep-red));
+    border-radius: 50%;
+    border: 2px solid var(--gold);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 22px;
+    z-index: 6;
+    box-shadow: 0 4px 16px rgba(139,0,0,0.5), inset 0 1px 0 rgba(255,255,255,0.2);
+    transition: transform 0.3s ease;
+  }
+  .envelope:hover .env-seal {
+    transform: translateX(-50%) scale(0.85) translateY(-8px);
+    opacity: 0.7;
+  }
+
+  .env-address {
+    position: absolute;
+    bottom: 28px; left: 0; right: 0;
+    text-align: center;
+    z-index: 4;
+  }
+  .env-address .to {
+    font-family: 'Dancing Script', cursive;
+    color: var(--ink);
+    font-size: 1.1rem;
+    opacity: 0.6;
+    letter-spacing: 0.04em;
+  }
+  .env-address .name {
+    font-family: 'Playfair Display', serif;
+    font-style: italic;
+    color: var(--crimson);
+    font-size: 1.5rem;
+  }
+
+  .open-btn {
+    background: linear-gradient(135deg, var(--crimson), var(--deep-red));
+    color: var(--gold-light);
+    border: 2px solid var(--gold);
+    padding: 16px 48px;
+    font-family: 'Cinzel', serif;
+    font-size: 0.95rem;
+    letter-spacing: 0.25em;
+    border-radius: 2px;
+    position: relative;
+    overflow: hidden;
+    transition: all 0.3s ease;
+    box-shadow: 0 8px 32px rgba(0,0,0,0.4);
+  }
+  .open-btn::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(135deg, var(--gold), transparent);
+    opacity: 0;
+    transition: opacity 0.3s;
+  }
+  .open-btn:hover::before { opacity: 0.15; }
+  .open-btn:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 12px 40px rgba(0,0,0,0.5);
+    color: #fff;
+  }
+  .open-btn:active { transform: translateY(0); }
+
+  /* ===================== LETTER CONTENT ===================== */
+  #letter-content {
+    position: relative;
+    z-index: 10;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 1.2s ease;
+    min-height: 100vh;
+    padding: 60px 20px 0;
+  }
+  #letter-content.visible {
+    opacity: 1;
+    pointer-events: all;
+  }
+
+  /* Stamp decoration top */
+  .page-header {
+    text-align: center;
+    padding: 60px 20px 40px;
+    position: relative;
+  }
+  .page-title {
+    font-family: 'Playfair Display', serif;
+    font-style: italic;
+    font-size: clamp(2.8rem, 7vw, 5rem);
+    color: var(--gold-light);
+    letter-spacing: 0.05em;
+    text-shadow: 0 4px 20px rgba(0,0,0,0.4);
+    animation: fadeSlideDown 1s ease forwards;
+  }
+  .page-subtitle {
+    font-family: 'Dancing Script', cursive;
+    color: var(--petal);
+    font-size: 1.3rem;
+    margin-top: 8px;
+    opacity: 0.8;
+    animation: fadeSlideDown 1s ease 0.3s forwards;
+    opacity: 0;
+  }
+  @keyframes fadeSlideDown {
+    from { opacity: 0; transform: translateY(-20px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .decorative-line {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 16px;
+    margin: 24px auto;
+    width: min(500px, 90%);
+  }
+  .decorative-line::before,
+  .decorative-line::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: linear-gradient(to right, transparent, var(--gold), transparent);
+  }
+  .decorative-line span { color: var(--gold); font-size: 1.2rem; }
+
+  /* The Letter Card */
+  .letter-card {
+    max-width: 720px;
+    margin: 0 auto 0;
+    background: linear-gradient(160deg, #FDF8ED 0%, #F9F0E4 40%, #FDF6E3 100%);
+    border: 2px solid rgba(201,168,76,0.4);
+    border-radius: 2px;
+    padding: 60px 50px 50px;
+    position: relative;
+    box-shadow:
+      0 2px 0 rgba(201,168,76,0.3),
+      0 40px 80px rgba(0,0,0,0.5),
+      inset 0 0 60px rgba(201,168,76,0.05);
+    animation: letterReveal 1.2s ease 0.5s forwards;
+    opacity: 0;
+    transform: translateY(40px);
+  }
+  @keyframes letterReveal {
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  /* Stamp-style zigzag border simulation */
+  .letter-card::before {
+    content: '';
+    position: absolute;
+    inset: -1px;
+    background: linear-gradient(var(--ivory), var(--ivory)) padding-box,
+      repeating-linear-gradient(
+        45deg,
+        var(--gold) 0px, var(--gold) 4px,
+        transparent 4px, transparent 8px
+      ) border-box;
+    border: 8px solid transparent;
+    border-radius: 2px;
+    z-index: -1;
+  }
+
+  /* Paper lines */
+  .letter-card::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background-image: repeating-linear-gradient(
+      transparent, transparent 31px, rgba(201,168,76,0.08) 31px, rgba(201,168,76,0.08) 32px
+    );
+    border-radius: 2px;
+    pointer-events: none;
+  }
+
+  .letter-to {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 8px;
+    animation: fadeIn 1s ease 1s both;
+  }
+  @keyframes fadeIn { from{opacity:0} to{opacity:1} }
+
+  .letter-to .label {
+    font-family: 'Cinzel', serif;
+    font-size: 0.75rem;
+    letter-spacing: 0.25em;
+    color: var(--crimson);
+    opacity: 0.7;
+  }
+  .letter-to .value {
+    font-family: 'Playfair Display', serif;
+    font-style: italic;
+    font-size: 1.5rem;
+    color: var(--crimson);
+  }
+  .letter-from {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 40px;
+    animation: fadeIn 1s ease 1.2s both;
+  }
+  .letter-from .label {
+    font-family: 'Cinzel', serif;
+    font-size: 0.75rem;
+    letter-spacing: 0.25em;
+    color: var(--crimson);
+    opacity: 0.7;
+  }
+  .letter-from .value {
+    font-family: 'Dancing Script', cursive;
+    font-size: 1.5rem;
+    color: var(--crimson);
+    font-weight: 600;
+  }
+
+  /* Stamps */
+  .stamps {
+    position: absolute;
+    top: 40px;
+    right: 40px;
+    display: flex;
+    gap: 10px;
+    animation: fadeIn 1s ease 1.4s both;
+  }
+  .stamp {
+    width: 72px;
+    height: 88px;
+    background: var(--ivory);
+    border: 3px solid var(--crimson);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: space-between;
+    padding: 6px 4px 5px;
+    position: relative;
+    box-shadow: 2px 2px 8px rgba(0,0,0,0.15);
+  }
+  .stamp::before {
+    content: '';
+    position: absolute;
+    inset: -6px;
+    background: repeating-conic-gradient(
+      var(--ivory) 0deg 22.5deg,
+      transparent 22.5deg 45deg
+    );
+    background-size: 10px 10px;
+    z-index: -1;
+  }
+  .stamp-icon { font-size: 1.8rem; }
+  .stamp-label {
+    font-family: 'Cinzel', serif;
+    font-size: 0.5rem;
+    letter-spacing: 0.15em;
+    color: var(--crimson);
+    font-weight: 600;
+  }
+
+  /* Poem */
+  .poem {
+    position: relative;
+    z-index: 1;
+    text-align: center;
+  }
+  .poem-line {
+    display: block;
+    font-family: 'Cormorant Garamond', serif;
+    font-size: clamp(1rem, 2.5vw, 1.2rem);
+    color: var(--ink);
+    line-height: 2.1;
+    letter-spacing: 0.02em;
+    opacity: 0;
+    transform: translateY(12px);
+    animation: lineReveal 0.6s ease forwards;
+  }
+  .poem-line:nth-child(1)  { animation-delay: 1.5s; }
+  .poem-line:nth-child(2)  { animation-delay: 1.65s; }
+  .poem-line:nth-child(3)  { animation-delay: 1.8s; }
+  .poem-line:nth-child(4)  { animation-delay: 1.95s; }
+  .poem-line:nth-child(5)  { animation-delay: 2.1s; }
+  .poem-line:nth-child(6)  { animation-delay: 2.25s; }
+  .poem-line:nth-child(7)  { animation-delay: 2.4s; }
+  .poem-line:nth-child(8)  { animation-delay: 2.55s; }
+  .poem-line:nth-child(9)  { animation-delay: 2.7s; }
+  .poem-line:nth-child(10) { animation-delay: 2.85s; }
+  .poem-line:nth-child(11) { animation-delay: 3.0s; }
+  .poem-line:nth-child(12) { animation-delay: 3.15s; }
+  .poem-line:nth-child(13) { animation-delay: 3.3s; }
+  .poem-line:nth-child(14) { animation-delay: 3.45s; }
+  @keyframes lineReveal {
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .poem-line em {
+    font-style: italic;
+    color: var(--crimson);
+    font-weight: 500;
+  }
+  .poem-line strong {
+    font-weight: 600;
+    color: var(--deep-red);
+  }
+
+  .poem-spacer { display: block; height: 12px; }
+
+  .signature {
+    margin-top: 40px;
+    text-align: center;
+    animation: fadeIn 1s ease 3.8s both;
+  }
+  .signature .sign-with {
+    font-family: 'Cormorant Garamond', serif;
+    font-style: italic;
+    font-size: 1.1rem;
+    color: var(--ink);
+    opacity: 0.7;
+  }
+  .signature .sign-name {
+    font-family: 'Dancing Script', cursive;
+    font-size: 2rem;
+    color: var(--crimson);
+    font-weight: 700;
+    margin-top: 4px;
+  }
+
+  /* Wax seal stamp */
+  .wax-seal {
+    position: absolute;
+    bottom: 30px;
+    right: 40px;
+    width: 70px;
+    height: 70px;
+    background: radial-gradient(circle at 35% 35%, #c41e3a, #6b0000);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.8rem;
+    box-shadow: 0 4px 16px rgba(107,0,0,0.5), inset 0 1px 0 rgba(255,255,255,0.1);
+    animation: fadeIn 1s ease 4s both;
+    border: 1.5px solid rgba(201,168,76,0.4);
+  }
+
+  /* ===================== PHOTOS SECTION ===================== */
+  .photos-section {
+    max-width: 720px;
+    margin: 60px auto 0;
+    opacity: 0;
+    transform: translateY(40px);
+    transition: opacity 1s ease, transform 1s ease;
+    padding-bottom: 100px;
+  }
+  .photos-section.visible {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  .photos-title {
+    text-align: center;
+    font-family: 'Playfair Display', serif;
+    font-style: italic;
+    font-size: 2rem;
+    color: var(--gold-light);
+    margin-bottom: 8px;
+    letter-spacing: 0.05em;
+  }
+  .photos-subtitle {
+    text-align: center;
+    font-family: 'Dancing Script', cursive;
+    color: var(--petal);
+    font-size: 1.1rem;
+    margin-bottom: 40px;
+    opacity: 0.8;
+  }
+
+  .photos-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 20px;
+  }
+
+  .photo-frame {
+    position: relative;
+    background: var(--ivory);
+    padding: 12px 12px 40px;
+    box-shadow: 0 8px 32px rgba(0,0,0,0.4), 0 2px 4px rgba(0,0,0,0.2);
+    transform: rotate(var(--rot, -1.5deg));
+    transition: transform 0.4s cubic-bezier(0.34,1.56,0.64,1), box-shadow 0.3s;
+  }
+  .photo-frame:nth-child(2) { --rot: 1.8deg; }
+  .photo-frame:nth-child(3) { --rot: -0.8deg; }
+  .photo-frame:nth-child(4) { --rot: 2.2deg; }
+  .photo-frame:hover {
+    transform: rotate(0deg) scale(1.04) translateY(-8px);
+    box-shadow: 0 20px 60px rgba(0,0,0,0.5);
+    z-index: 10;
+  }
+
+  .photo-frame img {
+    width: 100%;
+    aspect-ratio: 4/3;
+    object-fit: cover;
+    display: block;
+    filter: sepia(10%) contrast(1.05);
+  }
+
+  .photo-caption {
+    position: absolute;
+    bottom: 10px;
+    left: 0; right: 0;
+    text-align: center;
+    font-family: 'Dancing Script', cursive;
+    font-size: 0.95rem;
+    color: var(--ink);
+    opacity: 0.7;
+  }
+
+  /* Photo tape */
+  .photo-frame::before,
+  .photo-frame::after {
+    content: '';
+    position: absolute;
+    width: 40px;
+    height: 18px;
+    background: rgba(253,246,227,0.7);
+    z-index: 5;
+    border: 1px solid rgba(201,168,76,0.2);
+  }
+  .photo-frame::before { top: -9px; left: 50%; transform: translateX(-50%) rotate(-4deg); }
+  .photo-frame::after  { display: none; }
+
+  /* Add-your-own placeholder */
+  .photo-placeholder {
+    background: rgba(253,246,227,0.06);
+    border: 2px dashed rgba(201,168,76,0.3);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    aspect-ratio: 4/3;
+    color: rgba(201,168,76,0.5);
+    font-family: 'Cormorant Garamond', serif;
+    font-style: italic;
+    font-size: 1rem;
+    gap: 8px;
+    padding: 20px;
+    text-align: center;
+  }
+  .photo-placeholder span { font-size: 2rem; }
+
+  /* ===================== FOOTER ===================== */
+  .letter-footer {
+    text-align: center;
+    padding: 40px 20px 80px;
+    position: relative;
+    z-index: 10;
+  }
+  .footer-hearts {
+    display: flex;
+    justify-content: center;
+    gap: 16px;
+    margin-bottom: 20px;
+  }
+  .footer-heart {
+    font-size: 1.4rem;
+    animation: heartbeat 1.5s ease-in-out infinite;
+    animation-delay: calc(var(--i) * 0.2s);
+  }
+  @keyframes heartbeat {
+    0%,100%{transform:scale(1)} 50%{transform:scale(1.3)}
+  }
+  .footer-text {
+    font-family: 'Cormorant Garamond', serif;
+    font-style: italic;
+    color: rgba(245,230,232,0.5);
+    font-size: 0.9rem;
+    letter-spacing: 0.1em;
+  }
+
+  /* Floating hearts overlay */
+  .floating-heart {
+    position: fixed;
+    font-size: 1.2rem;
+    pointer-events: none;
+    z-index: 9985;
+    animation: floatHeart 2.5s ease-out forwards;
+    opacity: 0;
+  }
+  @keyframes floatHeart {
+    0%   { opacity: 0; transform: translateY(0) scale(0.5); }
+    20%  { opacity: 1; transform: translateY(-20px) scale(1); }
+    100% { opacity: 0; transform: translateY(-120px) scale(0.8) rotate(20deg); }
+  }
+
+  /* Scroll hint */
+  .scroll-hint {
+    position: absolute;
+    bottom: -48px;
+    left: 50%;
+    transform: translateX(-50%);
+    color: rgba(201,168,76,0.5);
+    font-family: 'Dancing Script', cursive;
+    font-size: 0.95rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 6px;
+    animation: scrollBob 2s ease-in-out infinite;
+  }
+  @keyframes scrollBob {
+    0%,100%{transform:translateX(-50%) translateY(0)} 50%{transform:translateX(-50%) translateY(8px)}
+  }
+  .scroll-hint svg { opacity: 0.5; }
+
+  @media (max-width: 600px) {
+    .letter-card { padding: 40px 24px 40px; }
+    .stamps { top: 20px; right: 16px; }
+    .stamp { width: 56px; height: 68px; }
+    .stamp-icon { font-size: 1.4rem; }
+    .photos-grid { grid-template-columns: 1fr; }
+    .wax-seal { bottom: 20px; right: 20px; }
+  }
+
+  /* ===================== BACK TO ENVELOPE BUTTON ===================== */
+  .back-btn {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin: 0 auto 40px;
+    width: fit-content;
+    background: transparent;
+    color: rgba(201,168,76,0.7);
+    border: 1px solid rgba(201,168,76,0.3);
+    padding: 10px 24px;
+    font-family: 'Cinzel', serif;
+    font-size: 0.75rem;
+    letter-spacing: 0.2em;
+    cursor: none;
+    border-radius: 2px;
+    transition: all 0.3s ease;
+    opacity: 0;
+    animation: fadeIn 1s ease 1s forwards;
+  }
+  .back-btn:hover {
+    background: rgba(201,168,76,0.08);
+    color: var(--gold-light);
+    border-color: rgba(201,168,76,0.6);
+    transform: translateY(-2px);
+  }
+  .back-btn svg {
+    transition: transform 0.3s ease;
+  }
+  .back-btn:hover svg {
+    transform: translateX(-4px);
+  }
+
+  /* ===================== MUSIC PLAYER ===================== */
+  .music-player {
+    position: fixed;
+    bottom: 32px;
+    right: 28px;
+    z-index: 500;
+    display: flex;
+    align-items: center;
+    gap: 0;
+    background: linear-gradient(135deg, rgba(107,0,0,0.92), rgba(44,24,16,0.96));
+    border: 1px solid rgba(201,168,76,0.4);
+    border-radius: 50px;
+    padding: 10px 10px;
+    box-shadow: 0 8px 32px rgba(0,0,0,0.5), 0 0 0 1px rgba(201,168,76,0.1);
+    backdrop-filter: blur(12px);
+    transition: all 0.4s cubic-bezier(0.34,1.56,0.64,1);
+    overflow: hidden;
+    max-width: 52px;
+  }
+  .music-player.expanded {
+    max-width: 280px;
+    padding: 10px 20px 10px 14px;
+    gap: 12px;
+  }
+
+  .music-toggle-btn {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    background: radial-gradient(circle at 35% 35%, var(--rose), var(--deep-red));
+    border: 1.5px solid rgba(201,168,76,0.5);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: none;
+    flex-shrink: 0;
+    transition: transform 0.2s ease;
+    color: var(--gold-light);
+    font-size: 14px;
+  }
+  .music-toggle-btn:hover { transform: scale(1.1); }
+
+  .music-info {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    min-width: 0;
+    opacity: 0;
+    transition: opacity 0.3s ease 0.1s;
+    white-space: nowrap;
+    overflow: hidden;
+  }
+  .music-player.expanded .music-info {
+    opacity: 1;
+  }
+  .music-track-name {
+    font-family: 'Dancing Script', cursive;
+    color: var(--gold-light);
+    font-size: 0.9rem;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .music-status {
+    font-family: 'Cinzel', serif;
+    font-size: 0.58rem;
+    letter-spacing: 0.15em;
+    color: rgba(201,168,76,0.55);
+    margin-top: 1px;
+  }
+
+  .music-bars {
+    display: flex;
+    align-items: flex-end;
+    gap: 2px;
+    height: 14px;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    flex-shrink: 0;
+  }
+  .music-player.expanded .music-bars { opacity: 1; }
+  .music-bar {
+    width: 3px;
+    background: var(--rose);
+    border-radius: 2px;
+    animation: barDance 0.8s ease-in-out infinite alternate;
+  }
+  .music-bar:nth-child(1) { height: 6px;  animation-delay: 0s;    animation-duration: 0.7s; }
+  .music-bar:nth-child(2) { height: 12px; animation-delay: 0.1s;  animation-duration: 0.9s; }
+  .music-bar:nth-child(3) { height: 8px;  animation-delay: 0.2s;  animation-duration: 0.6s; }
+  .music-bar:nth-child(4) { height: 14px; animation-delay: 0.05s; animation-duration: 1.0s; }
+  @keyframes barDance {
+    from { transform: scaleY(0.3); opacity: 0.5; }
+    to   { transform: scaleY(1);   opacity: 1; }
+  }
+  .music-bars.paused .music-bar {
+    animation-play-state: paused;
+    transform: scaleY(0.3);
+    opacity: 0.3;
+  }
+</style>
+</head>
+<body>
+
+<!-- Music Player -->
+<div class="music-player" id="music-player">
+  <button class="music-toggle-btn" id="music-toggle-btn" onclick="toggleMusic()" title="Toggle music">
+    <svg id="music-icon-play" width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
+    <svg id="music-icon-pause" width="14" height="14" viewBox="0 0 24 24" fill="currentColor" style="display:none"><rect x="6" y="4" width="4" height="16"/><rect x="14" y="4" width="4" height="16"/></svg>
+  </button>
+  <div class="music-info">
+    <div class="Dare4distance" id="music-track-name">♪ your song</div>
+    <div class="music-status" id="music-status">CLICK TO PLAY</div>
+  </div>
+  <div class="music-bars" id="music-bars">
+    <div class="music-bar"></div>
+    <div class="music-bar"></div>
+    <div class="music-bar"></div>
+    <div class="music-bar"></div>
+  </div>
+</div>
+
+<!-- Background Audio — replace src with your music URL -->
+<audio id="bg-music" loop>
+  <source src=Dare4distance.mp3 type="audio/mpeg">
+</audio>
+
+<!-- Background -->
+<div class="bg-texture"></div>
+
+<!-- Petals -->
+<div id="petals-container"></div>
+
+<!-- ======================== ENVELOPE SCENE ======================== -->
+<div id="envelope-scene">
+  <div class="envelope-wrap">
+    <p class="envelope-hint">✦ 6 Years of Love ✦</p>
+    <div class="envelope" id="envelope" title="Open your letter">
+      <div class="env-body">
+        <div class="env-bottom-left"></div>
+        <div class="env-bottom-right"></div>
+        <div class="env-address">
+          <div class="to">To:</div>
+          <div class="name">MommyBear</div>
+        </div>
+      </div>
+      <div class="env-flap"></div>
+      <div class="env-seal">💌</div>
+    </div>
+    <button class="open-btn" id="open-btn" onclick="openLetter()">
+      OPEN THE LETTER
+    </button>
+  </div>
+</div>
+
+<!-- ======================== LETTER CONTENT ======================== -->
+<div id="letter-content">
+
+  <!-- Back to Envelope Button -->
+  <button class="back-btn" onclick="backToEnvelope()">
+    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
+    BACK TO ENVELOPE
+  </button>
+
+  <div class="page-header">
+    <h1 class="page-title">A Love Letter</h1>
+    <p class="page-subtitle">crafted with care, just for you</p>
+    <div class="decorative-line"><span>✦</span></div>
+  </div>
+
+  <!-- The Letter -->
+  <div class="letter-card">
+    <!-- To / From -->
+    <div class="letter-to">
+      <span class="label">TO:</span>
+      <span class="value">MommyBear</span>
+    </div>
+    <div class="letter-from">
+      <span class="label">FROM:</span>
+      <span class="value">DaddyBear</span>
+    </div>
+
+    <!-- Stamps -->
+    <div class="stamps">
+      <div class="stamp">
+        <div class="stamp-icon">💕</div>
+        <div class="stamp-label">ROMANCE</div>
+      </div>
+      <div class="stamp">
+        <div class="stamp-icon">🗝️</div>
+        <div class="stamp-label">POSTAGE</div>
+      </div>
+    </div>
+
+    <!-- Poem -->
+    <div class="poem">
+      <!-- Isulat ang iyong content dito gamit ang mga span tags -->
+      <!-- Halimbawa: -->
+      <!-- <span class="poem-line">Ang iyong unang linya dito.</span> -->
+      <!-- <span class="poem-spacer"></span> -->
+      <!-- <span class="poem-line">Pangalawang linya dito.</span> -->
+<span class="poem-line">
+To be honest, hindi ko alam kung paano ko sisimulan tong sulat na to kasi sa dami ng nararamdaman ko para sayo, baka magkulang ang mga words q. Pero ang sigurado ko lang, gusto kong malaman mo kung gaano ka kahalaga sa buhay ko.
+</span>
+
+<span class="poem-spacer">-</span>
+
+<span class="poem-line">
+Ngayong araw, sinecebrate natin ang isa na namang taon ng pagsasama natin, at habang nakikita ko kung paano tayo nag grogrow, lalo akong nagpapasalamat kay Lord na ikaw ang ibinigay nya sa akin. You are hands down the best thing that ever happened to me.
+</span>
+
+<span class="poem-spacer">-</span>
+
+<span class="poem-line">
+Gusto ko lang magpasalamat sa lahat ng mga bagay na ginagawa mo para sa atin — yung mga maliliit na bagay man o yung mga super effort na moments. Thank you sa walang sawang pag unawa sa akin, lalo na sa mga araw na aminin natin, medyo mahirap at tupakin ako intindihin. Thank you sa mga hug mo na instant stress reliever ko tuwing magkasama tayo at kiss mo sa call kapag pagod na pagod ako sa mga school, sa buhay, o sa kung ano anong personal struggles ko. Kahit hingi ko lang yung kiss na yun, nanghihina ako hahaha. Your presence is literally my safe space yung tipong kahit sobrang gulo at ingay ng mundo sa labas, basta kasama kita, parang nagpapause ang lahat at nakakahinga ako nang maluwag.
+</span>
+
+<span class="poem-spacer">-</span>
+
+<span class="poem-line">
+Salamat din sa lahat ng random na asaran natin, sa mga inside jokes na tayo lang ang nakakagets, at sa mga seryosong usap natin tungkol sa future pero di q alam bat lagi mo iniisip d ako seryoso. Sa bawat araw na lumilipas, mas lalo kong narerealize na hindi lang kita basta gf, ka music vibe, partner sa kalokohan, best friend, at pinakamalaking supporter ko sa lahat ng bagay. Sobrang swerte ko kasi bukod sa napakaganda mo (syempre, crush na crush pa rin kita hanggang ngayon), napakaganda rin ng puso mo. Ikaw yung nagiging inspirasyon ko para magsumikap at maging mas mabuting version ng sarili ko araw araw.
+</span>
+
+<span class="poem-spacer">-</span>
+
+<span class="poem-line">
+Alam ko naman na hindi laging smooth ang journey natin. May mga times na nagkakasalubong ang mga tupak natin, may mga hindi pagkakaunawaan, at may mga random challenges na sumusubok sa atin. Pero alam mo kung ano yung pinakafavorite part ko sa story natin? It’s the fact na no matter how hard it gets, we always choose to hold each other’s hands at the end of the day. Doon ko narealize na ang totoong love pala, hindi lang nakikita kapag masaya at madali ang lahat. Mas nasusukat ito sa kung paano natin hinaharap yung mga bagyo nang magkasama — nang may kasamang matinding pasensya, respect, at pagmamahal.
+</span>
+
+<span class="poem-spacer">-</span>
+
+<span class="poem-line">
+Kaya naman, ngayong anniversary natin, gusto ko lang irefresh tong mga promises ko sayo. I promise na mananatili ako sa tabi mo, solid pa rin kahit anong mangyari. I promise na makikinig ako sa mga rants at kwento mo, kahit paulit ulit pa yan o tungkol sa pinakamababaw na bagay at pipigilan ko mag side comments. Susuportahan kita sa lahat ng hobbies mo, sa mga pangarap mo, at sa mga bagay na nagpapasaya sayo. Aalagaan kita kapag down ka, at palagi kong ipapaalala sayo kung gaano ka kaspecial tuwing nakakalimutan mo ang worth mo. Walang perfect na relasyon, pero I promise to do my best every single day para ingatan at alagaan tong love na binuo natin.
+</span>
+
+<span class="poem-spacer">-</span>
+
+<span class="poem-line">
+The more time passes, the more na nakikita ko yung future ko na ikaw ang kasama. Ikaw yung gusto kong makachikahan at makatabi sa dulo ng bawat nakakapagod na araw, at ikaw yung gusto kong unang makita pag gising ko sa umaga. Ikaw yung present ko, at ikaw definitely ang future ko.
+</span>
+
+<span class="poem-spacer">-</span>
+
+<span class="poem-line">
+Thank you for choosing me, and thank you for just being you. Hinding hindi sapat ang kahit anong haba nitong sulat para iexplain kung gaano kita kamahal, pero asahan mo na ipaparamdam ko to sayo sa bawat araw na magkasama tayo.
+</span>
+
+<span class="poem-spacer">-</span>
+
+<span class="poem-line">
+Happy Anniversary ulit Mommy bear. I love you so so much more than you’ll ever know. Cheers to more years, more memories, and more dreams na tutuparin nating dalawa na magkahawak kamay!
+</span>
+    </div>
+
+    <!-- Signature -->
+    <div class="signature">
+      <div class="sign-with">With all our love,</div>
+      <div class="sign-name">The Kigan Anniversary </div>
+    </div>
+
+
+    <!-- Scroll hint -->
+    <div class="scroll-hint">
+      <span>scroll to see our memories</span>
+      <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+        <path d="M10 4v12M4 10l6 6 6-6" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+      </svg>
+    </div>
+  </div>
+
+  <!-- ======================== PHOTOS SECTION ======================== -->
+  <div class="photos-section" id="photos-section">
+    <div class="decorative-line" style="margin-bottom:32px"><span>✦</span></div>
+    <h2 class="photos-title">Our Memories</h2>
+    <p class="photos-subtitle">moments that made us, us</p>
+
+    <div class="photos-grid">
+
+      <!-- Replace src values with your photo URLs -->
+      <div class="photo-frame">
+        <img src='pogi.jpeg' alt="Our memory" onerror="this.parentElement.innerHTML='<div class=\'photo-placeholder\'><span>📷</span>Add your photo here<small>Replace YOUR_PHOTO_1_URL_HERE</small></div>'">
+        <div class="photo-caption">our first chapter ✦</div>
+      </div>
+
+      <div class="photo-frame">
+        <img src='kiss.jpg' alt="Our memory" onerror="this.parentElement.innerHTML='<div class=\'photo-placeholder\'><span>📷</span>Add your photo here<small>Replace YOUR_PHOTO_2_URL_HERE</small></div>'">
+        <div class="photo-caption">written in the stars ✦</div>
+      </div>
+
+      <div class="photo-frame">
+        <img src='pic.jpg' alt="Our memory" onerror="this.parentElement.innerHTML='<div class=\'photo-placeholder\'><span>📷</span>Add your photo here<small>Replace YOUR_PHOTO_3_URL_HERE</small></div>'">
+        <div class="photo-caption">love in every frame ✦</div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- Footer -->
+  <div class="letter-footer">
+    <div class="footer-hearts">
+      <span class="footer-heart" style="--i:0">❤️</span>
+      <span class="footer-heart" style="--i:1">🌹</span>
+      <span class="footer-heart" style="--i:2">❤️</span>
+      <span class="footer-heart" style="--i:3">🌹</span>
+      <span class="footer-heart" style="--i:4">❤️</span>
+    </div>
+    <p class="footer-text">© I love you so much!</p>
+  </div>
+
+</div>
+
+<script>
+  // ── Petals ──
+  const petalContainer = document.getElementById('petals-container');
+  function spawnPetal() {
+    const p = document.createElement('div');
+    p.className = 'petal';
+    p.style.left = Math.random() * 100 + 'vw';
+    const dur = 6 + Math.random() * 8;
+    const delay = Math.random() * 4;
+    p.style.animationDuration = dur + 's';
+    p.style.animationDelay = delay + 's';
+    p.style.transform = `rotate(${Math.random()*360}deg)`;
+    p.style.opacity = '0';
+    petalContainer.appendChild(p);
+    setTimeout(() => p.remove(), (dur + delay) * 1000);
+  }
+  setInterval(spawnPetal, 600);
+  for (let i = 0; i < 6; i++) spawnPetal();
+
+  // ── Floating hearts on click ──
+  document.addEventListener('click', e => {
+    const hearts = ['❤️','🌹','💕','✨','🌸'];
+    const h = document.createElement('div');
+    h.className = 'floating-heart';
+    h.textContent = hearts[Math.floor(Math.random() * hearts.length)];
+    h.style.left = e.clientX + 'px';
+    h.style.top  = e.clientY + 'px';
+    document.body.appendChild(h);
+    setTimeout(() => h.remove(), 2600);
+  });
+
+  // ── Open Letter ──
+  let letterOpened = false;
+  function openLetter() {
+    if (letterOpened) return;
+    letterOpened = true;
+
+    const scene = document.getElementById('envelope-scene');
+    const content = document.getElementById('letter-content');
+
+    // Animate envelope away
+    const env = document.querySelector('.envelope-wrap');
+    env.style.transition = 'all 0.8s cubic-bezier(0.34,1.56,0.64,1)';
+    env.style.transform = 'scale(1.15) translateY(-20px)';
+    env.style.opacity = '0';
+
+    setTimeout(() => {
+      scene.classList.add('hidden');
+      content.classList.add('visible');
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+      initScrollObserver();
+      // Start music (if not already playing) and expand player
+      if (!isPlaying) startMusic();
+      setTimeout(() => {
+        document.getElementById('music-player').classList.add('expanded');
+        setTimeout(() => document.getElementById('music-player').classList.remove('expanded'), 4000);
+      }, 1000);
+    }, 800);
+  }
+
+  // ── Back to Envelope ──
+  function backToEnvelope() {
+    const scene = document.getElementById('envelope-scene');
+    const content = document.getElementById('letter-content');
+    const env = document.querySelector('.envelope-wrap');
+
+    content.classList.remove('visible');
+    letterOpened = false;
+
+    // Reset envelope animation
+    env.style.transition = 'none';
+    env.style.transform = 'scale(0.9) translateY(20px)';
+    env.style.opacity = '0';
+
+    setTimeout(() => {
+      scene.classList.remove('hidden');
+      window.scrollTo({ top: 0, behavior: 'instant' });
+      setTimeout(() => {
+        env.style.transition = 'all 0.8s cubic-bezier(0.34,1.56,0.64,1)';
+        env.style.transform = '';
+        env.style.opacity = '1';
+      }, 50);
+    }, 600);
+  }
+
+  // ── Music Player ──
+  const audio = document.getElementById('bg-music');
+  const musicPlayer = document.getElementById('music-player');
+  const musicBars = document.getElementById('music-bars');
+  const musicStatus = document.getElementById('music-status');
+  const iconPlay = document.getElementById('music-icon-play');
+  const iconPause = document.getElementById('music-icon-pause');
+  let isPlaying = false;
+  let autoplayUnlocked = false;
+
+  function getTrackName(src) {
+    if (!src || src.includes('YOUR_MUSIC_URL_HERE')) return '♪ your song';
+    const parts = src.split('/');
+    const filename = parts[parts.length - 1].split('?')[0];
+    return '♪ ' + decodeURIComponent(filename.replace(/\.[^.]+$/, '').replace(/[-_]/g, ' '));
+  }
+
+  function startMusic() {
+    audio.play().then(() => {
+      isPlaying = true;
+      iconPlay.style.display = 'none';
+      iconPause.style.display = 'block';
+      musicBars.classList.remove('paused');
+      musicStatus.textContent = 'NOW PLAYING';
+      document.getElementById('music-track-name').textContent = getTrackName(audio.currentSrc || audio.src);
+      musicPlayer.classList.add('expanded');
+      setTimeout(() => musicPlayer.classList.remove('expanded'), 4000);
+    }).catch(() => {
+      musicStatus.textContent = 'TAP ♪ TO PLAY';
+    });
+  }
+
+  function toggleMusic() {
+    if (!isPlaying) {
+      startMusic();
+    } else {
+      audio.pause();
+      isPlaying = false;
+      iconPlay.style.display = 'block';
+      iconPause.style.display = 'none';
+      musicBars.classList.add('paused');
+      musicStatus.textContent = 'PAUSED';
+    }
+  }
+
+  // ── Autoplay on first user interaction ──
+  function tryAutoplay() {
+    if (autoplayUnlocked || isPlaying) return;
+    autoplayUnlocked = true;
+    startMusic();
+    document.removeEventListener('click', tryAutoplay);
+    document.removeEventListener('touchstart', tryAutoplay);
+    document.removeEventListener('keydown', tryAutoplay);
+  }
+
+  // Try immediate autoplay (works if browser allows it)
+  audio.play().then(() => {
+    isPlaying = true;
+    autoplayUnlocked = true;
+    iconPlay.style.display = 'none';
+    iconPause.style.display = 'block';
+    musicBars.classList.remove('paused');
+    musicStatus.textContent = 'NOW PLAYING';
+    document.getElementById('music-track-name').textContent = getTrackName(audio.currentSrc || audio.src);
+  }).catch(() => {
+    // Browser blocked autoplay — wait for first interaction
+    musicStatus.textContent = 'TAP ♪ TO PLAY';
+    document.addEventListener('click', tryAutoplay);
+    document.addEventListener('touchstart', tryAutoplay);
+    document.addEventListener('keydown', tryAutoplay);
+  });
+
+  // ── Scroll Observer for photos ──
+  function initScrollObserver() {
+    const photos = document.getElementById('photos-section');
+    const obs = new IntersectionObserver(entries => {
+      entries.forEach(e => {
+        if (e.isIntersecting) {
+          e.target.classList.add('visible');
+          obs.unobserve(e.target);
+        }
+      });
+    }, { threshold: 0.15 });
+    obs.observe(photos);
+  }
+
+
+</script>
+</body>
+</html>
